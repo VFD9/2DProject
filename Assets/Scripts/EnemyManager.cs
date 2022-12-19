@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : ManagerSingleton2<EnemyManager>
 {
     public GameObject pPrefabMob = null;
     public Transform StartPos;
@@ -10,6 +10,11 @@ public class EnemyManager : MonoBehaviour
     private ObjectPool _pPool;
 
     private Queue<GameObject> pMobQueue = new Queue<GameObject>();
+
+    // 골드 포지션
+    public ItemFX prefabItem;
+    public Transform toTweenPos;
+    public Transform goldParent;
 
     void Start()
     {
@@ -20,39 +25,82 @@ public class EnemyManager : MonoBehaviour
         this._pPool.Initialize(this.pPrefabMob, this.StartPos); // pPool을 Initialize() 함수로 초기값 설정
 
         this.StartCoroutine(CreateEnemy());
-        this.StartCoroutine(DeleteEnemy());
     }
 
     IEnumerator CreateEnemy()
 	{
-        yield return null;
+        yield return new WaitForSeconds(Random.Range(1f, 1.5f));
 
         while(true)
 		{
-            GameObject mob = this._pPool.GetQueue();
-            this.pMobQueue.Enqueue(mob);
-            yield return new WaitForSeconds(Random.Range(1f, 3f));
+            if (GameManager.Instance.isScroll)
+            {
+                GameObject mob = this._pPool.GetQueue();
+                Monster cMob = mob.GetComponent<Monster>();
+                cMob.HP = 100;
+
+                this.pMobQueue.Enqueue(mob);
+                yield return new WaitForSeconds(Random.Range(1f, 1.5f));
+            }
+            else
+                yield break;
 		}
 	}
 
-    IEnumerator DeleteEnemy()
+    public int Damaged(int att)
 	{
-        yield return null;
+        if (this.pMobQueue.Count != 0)
+		{
+            GameObject obj = this.pMobQueue.Peek();
+            Monster mob = obj.GetComponent<Monster>();
+            mob.HP -= att;
 
-        while (true)
-        {
-            if (this.pMobQueue.Count != 0)
+            if (mob.HP <= 0)
 			{
-                GameObject obj = this.pMobQueue.Peek(); // Peek() 맨 처음에 있는거 돌려줌
-                Vector3 pos = Camera.main.WorldToViewportPoint(obj.transform.position); // 카메라에 있는 Viewport Rect를 기준으로 함
+                // 돈 올라가는 애니메이션
+                this.SetMoney();
 
-                if (pos.x < 0f)
-				{
-                    this._pPool.InsertQueue(this.pMobQueue.Dequeue()); // 카메라의 Viewport Rect에서 나가면 오브젝트를 뺀다.
-                }
+                GameManager.Instance.isScroll = true;
+                this.StartCoroutine(CreateEnemy());
+                this._pPool.InsertQueue(this.pMobQueue.Dequeue());
 			}
 
-            yield return null;
-        }
-    }
+            return mob.HP;
+		}
+
+        return 0;
+	}
+
+    void SetMoney()
+	{
+        int randCount = Random.Range(5, 10);
+        for(int i = 0; i < randCount; ++i)
+		{
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+            ItemFX itemFx = Instantiate(prefabItem, screenPos, Quaternion.identity);
+            itemFx.transform.SetParent(goldParent);
+            itemFx.Explosion(screenPos, toTweenPos.position, 150f);
+		}
+	}
+
+    //IEnumerator DeleteEnemy()
+	//{
+    //    yield return null;
+    //
+    //    while (true)
+    //    {
+    //        if (this.pMobQueue.Count != 0)
+	//		{
+    //            GameObject obj = this.pMobQueue.Peek(); // Peek() 맨 처음에 있는거 돌려줌
+    //            Vector3 pos = Camera.main.WorldToViewportPoint(obj.transform.position); // 카메라에 있는 Viewport Rect를 기준으로 함
+    //
+    //            if (pos.x < 0f)
+	//			  {
+    //                this._pPool.InsertQueue(this.pMobQueue.Dequeue()); // 카메라의 Viewport Rect에서 나가면 오브젝트를 뺀다.
+    //            }
+	//		}
+    //
+    //        yield return null;
+    //    }
+    //}
 }
