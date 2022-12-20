@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class EnemyManager : ManagerSingleton2<EnemyManager>
 {
     public GameObject pPrefabMob = null;
+    public GameObject Player;
     public Transform StartPos;
 
     private ObjectPool _pPool;
@@ -15,6 +18,8 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
     public ItemFX prefabItem;
     public Transform toTweenPos;
     public Transform goldParent;
+    public Transform fromPos;
+    public Transform HP;
 
     void Start()
     {
@@ -63,6 +68,13 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
                 GameManager.Instance.isScroll = true;
                 this.StartCoroutine(CreateEnemy());
                 this._pPool.InsertQueue(this.pMobQueue.Dequeue());
+                Player.GetComponent<PlayerControl>().HP += 10;
+                HP.GetComponent<Image>().fillAmount += 0.1f;
+			}
+            else
+			{
+                DamageOn damageTxt = obj.GetComponent<DamageOn>();
+                damageTxt.DamagedTxt();
 			}
 
             return mob.HP;
@@ -70,17 +82,39 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
 
         return 0;
 	}
+    
+    public int Attack(int atk)
+    {
+        if (this.pMobQueue.Count != 0)
+        {
+            GameObject obj = this.pMobQueue.Peek();
+            Monster mob = obj.GetComponent<Monster>();
+            mob.atk = atk;
+
+            Player.GetComponent<PlayerControl>().HP -= atk;
+            HP.GetComponent<Image>().fillAmount -= atk * 0.01f;
+
+            if (Player.GetComponent<PlayerControl>().HP == 0)
+                SceneManager.LoadScene(0);
+
+            return atk;
+        }
+
+        return 0;
+    }
 
     void SetMoney()
 	{
         int randCount = Random.Range(5, 10);
         for(int i = 0; i < randCount; ++i)
 		{
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(fromPos.position);
             ItemFX itemFx = Instantiate(prefabItem, screenPos, Quaternion.identity);
             itemFx.transform.SetParent(goldParent);
             itemFx.Explosion(screenPos, toTweenPos.position, 150f);
 		}
+
+        GameManager.Instance.SetMoney(Random.Range(50, 100));
 	}
 
     //IEnumerator DeleteEnemy()

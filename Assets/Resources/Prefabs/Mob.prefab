@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 1431483136297557856}
   - component: {fileID: 1431483136297557859}
   - component: {fileID: -9140947534658552399}
+  - component: {fileID: -6859203702554311830}
+  - component: {fileID: -3763277833036886507}
   m_Layer: 0
   m_Name: Mob
   m_TagString: Monster
@@ -116,4 +118,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   monSpeed: 5
+  atk: 5
   StartPosition: {fileID: 0}
+--- !u!114 &-6859203702554311830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431483136297557858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66db379fa7514fa4ea56509a737c79ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabDamage: {fileID: 4624601935649399477, guid: 760c1c112d732584b871fef2cb60b77f, type: 3}
+--- !u!95 &-3763277833036886507
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431483136297557858}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6e8d9ffea118f2947b8ddc833edd7444, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

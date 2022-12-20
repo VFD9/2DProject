@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayerControl : MonoBehaviour
 {
+    public int HP = 100;
     public int att = 20;
     Animator animator;
 
@@ -39,7 +42,7 @@ public class PlayerControl : MonoBehaviour
 		}
     }
 
-	private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.tag == "Monster")
 		{
