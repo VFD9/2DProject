@@ -37,12 +37,13 @@ public class Monster : MonoBehaviour
                 normalizeTime > cntLoop)
             {
                 cntLoop += 1;
-                playerHP = EnemyManager.Instance.Attack(atk);
+                playerHP -= EnemyManager.Instance.Attack(atk);
 
                 if (playerHP <= 0)
                 {
                     animator.SetBool("attack", false);
                     cntLoop = 0;
+                    return;
                 }
             }
         }
@@ -60,6 +61,7 @@ public class Monster : MonoBehaviour
         {
             GameManager.Instance.isScroll = false;
             animator.SetBool("attack", true);
+            playerHP = collision.gameObject.GetComponent<PlayerControl>().HP;
         }
     }
 }

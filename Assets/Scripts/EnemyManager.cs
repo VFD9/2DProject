@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class EnemyManager : ManagerSingleton2<EnemyManager>
 {
@@ -85,17 +84,10 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
     
     public int Attack(int atk)
     {
-        if (this.pMobQueue.Count != 0)
+        if (Player.GetComponent<PlayerControl>().HP != 0)
         {
-            GameObject obj = this.pMobQueue.Peek();
-            Monster mob = obj.GetComponent<Monster>();
-            mob.atk = atk;
-
             Player.GetComponent<PlayerControl>().HP -= atk;
             HP.GetComponent<Image>().fillAmount -= atk * 0.01f;
-
-            if (Player.GetComponent<PlayerControl>().HP == 0)
-                SceneManager.LoadScene(0);
 
             return atk;
         }

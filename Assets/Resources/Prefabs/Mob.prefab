@@ -117,9 +117,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 100
+  atk: 10
   monSpeed: 5
-  atk: 5
   StartPosition: {fileID: 0}
+  playerHP: 0
 --- !u!114 &-6859203702554311830
 MonoBehaviour:
   m_ObjectHideFlags: 0

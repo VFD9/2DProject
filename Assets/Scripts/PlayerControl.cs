@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -40,6 +41,9 @@ public class PlayerControl : MonoBehaviour
 				}
 			}
 		}
+
+        if (HP <= 0)
+            animator.SetTrigger("death");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
