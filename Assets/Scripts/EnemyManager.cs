@@ -84,15 +84,10 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
     
     public int Attack(int atk)
     {
-        if (Player.GetComponent<PlayerControl>().HP != 0)
-        {
-            Player.GetComponent<PlayerControl>().HP -= atk;
-            HP.GetComponent<Image>().fillAmount -= atk * 0.01f;
+        Player.GetComponent<PlayerControl>().HP -= atk;
+        HP.GetComponent<Image>().fillAmount -= atk * 0.01f;
 
-            return atk;
-        }
-
-        return 0;
+        return atk;
     }
 
     void SetMoney()

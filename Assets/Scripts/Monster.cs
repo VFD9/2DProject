@@ -17,7 +17,7 @@ public class Monster : MonoBehaviour
         animator = GetComponent<Animator>();
 	}
 
-    int playerHP = 0;
+    public int playerHP = 0;
     int cntLoop = 0;
 
     void Update()
