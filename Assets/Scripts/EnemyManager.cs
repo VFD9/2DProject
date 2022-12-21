@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class EnemyManager : ManagerSingleton2<EnemyManager>
 {
     public GameObject pPrefabMob = null;
-    public GameObject Player;
     public Transform StartPos;
 
     private ObjectPool _pPool;
@@ -18,7 +17,6 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
     public Transform toTweenPos;
     public Transform goldParent;
     public Transform fromPos;
-    public Transform HP;
 
     void Start()
     {
@@ -51,13 +49,19 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
 		}
 	}
 
-    public int Damaged(int att)
+    public float Damaged(float att)
 	{
         if (this.pMobQueue.Count != 0)
 		{
             GameObject obj = this.pMobQueue.Peek();
             Monster mob = obj.GetComponent<Monster>();
             mob.HP -= att;
+
+            if (mob.HP >= 0)
+            {
+                DamageOn damageTxt = obj.GetComponent<DamageOn>();
+                damageTxt.DamagedTxt();
+            }
 
             if (mob.HP <= 0)
 			{
@@ -67,13 +71,6 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
                 GameManager.Instance.isScroll = true;
                 this.StartCoroutine(CreateEnemy());
                 this._pPool.InsertQueue(this.pMobQueue.Dequeue());
-                Player.GetComponent<PlayerControl>().HP += 10;
-                HP.GetComponent<Image>().fillAmount += 0.1f;
-			}
-            else
-			{
-                DamageOn damageTxt = obj.GetComponent<DamageOn>();
-                damageTxt.DamagedTxt();
 			}
 
             return mob.HP;
@@ -81,14 +78,6 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
 
         return 0;
 	}
-    
-    public int Attack(int atk)
-    {
-        Player.GetComponent<PlayerControl>().HP -= atk;
-        HP.GetComponent<Image>().fillAmount -= atk * 0.01f;
-
-        return atk;
-    }
 
     void SetMoney()
 	{

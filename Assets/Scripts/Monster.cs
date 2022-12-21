@@ -4,21 +4,22 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    public int HP = 100;
-    public int atk = 5;
+    public float HP = 100;
     public float monSpeed;
-    public Transform StartPosition;
 
-    private bool _isScroll = true;
-    Animator animator;
+    private Animator animator;
 
-	private void Start()
+    private float playerHP = 0;
+    private int cntLoop = 0;
+    private PlayerControl player;
+    private float playerDef;
+
+    public float att = 5;
+
+    private void Start()
 	{
         animator = GetComponent<Animator>();
 	}
-
-    public int playerHP = 0;
-    int cntLoop = 0;
 
     void Update()
     {
@@ -28,40 +29,40 @@ public class Monster : MonoBehaviour
             transform.Translate(Vector2.left * Time.deltaTime * monSpeed);
 		}
 
+        // 애니메이터의 애니메이션 이름이 Attack1일때
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
-            float normalizeTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime; // normalizeTime => 애니메이션 진행도
-            float normalizeTimeInProcess = normalizeTime - Mathf.Floor(normalizeTime); // Mathf.Floor => 소수점을 버리고 정수만 남김
+            // normalizedTime은 float형으로 정수부븐은 애니메이션의 루프횟수,
+            // 소수부분은 현재 애니메이션의 진행정도를 의미한다.
+            float normalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            // Mathf.Floor로 소수부분을 내림한 후 정수부분을 빼준다.
+            float currentState = normalizedTime - Mathf.Floor(normalizedTime);
 
-            if (normalizeTimeInProcess >= 0.9f && // 애니메이션 진행 상황이 0.9f 이상이면서 진행도가 cntLoop 초과일때
-                normalizeTime > cntLoop)
+            if (currentState >= 0.9f && // 애니메이션 진행 상황이 0.9f 이상이면서 진행도가 cntLoop 초과일때
+                normalizedTime > cntLoop)
             {
-                cntLoop += 1;
-                playerHP -= EnemyManager.Instance.Attack(atk);
+                if (att >= playerDef)
+                {
+                    playerHP = player.Damage(att - playerDef);
+                    cntLoop += 1;
+                }
 
                 if (playerHP <= 0)
                 {
                     animator.SetBool("attack", false);
                     cntLoop = 0;
-                    return;
                 }
             }
         }
     }
 
-    public void SetScroll(bool isScroll)
-	{
-        this._isScroll = isScroll;
-        this.monSpeed = (isScroll) ? 5 : 0;
-	}
-
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        if (collision.tag == "Player")
-        {
-            GameManager.Instance.isScroll = false;
+		if (collision.tag == "Player")
+		{
             animator.SetBool("attack", true);
-            playerHP = collision.gameObject.GetComponent<PlayerControl>().HP;
+            player = collision.gameObject.GetComponent<PlayerControl>();
+            playerDef = player.def;
         }
-    }
+	}
 }
