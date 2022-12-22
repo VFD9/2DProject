@@ -30,6 +30,7 @@ public class PlayerControl : MonoBehaviour
 
     private float attackspeed = 1;
     float attcount = 0;
+    float[] numlist = new float[100];
 
     void Start()
     {
@@ -53,6 +54,7 @@ public class PlayerControl : MonoBehaviour
 			{
                 cntLoop += 1;
                 attcount += 1;
+
                 mobHP = EnemyManager.Instance.Damaged(att);
 
                 if (attcount > 100)
@@ -149,21 +151,18 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    //void CreateUnDuplicateRandom(float min, float max)
-    //{
-    //    float currentNumber = Random.Range(mincre, maxcre);
-    //
-    //    for (int i = 0; i < max;)
-    //    {
-    //        if (cre.ToString().Contains(currentNumber))
-    //        {
-    //            currentNumber = Random.Range(min, max);
-    //        }
-    //        else
-    //        {
-    //            cubeList.Add(currentNumber);
-    //            i++;
-    //        }
-    //    }
-    //}
+    public void creatt(float _att)
+    {
+        for (int i = 0; i < 100; ++i)
+        {
+            float rand = Random.Range(1, 100);
+            numlist[i] = rand;
+
+            for (int j = 0; j < i; ++j)
+                if (numlist[j] == numlist[i]) --i;
+
+            if (numlist[i] <= cre)
+                _att *= 2;
+        }
+    }
 }
