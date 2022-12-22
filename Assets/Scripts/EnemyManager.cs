@@ -18,6 +18,8 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
     public Transform goldParent;
     public Transform fromPos;
 
+    public Transform damageRoot;
+
     void Start()
     {
         GameObject obj = new GameObject(); // EnemyManager 에 새로운 오브젝트 생성
@@ -49,7 +51,7 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
 		}
 	}
 
-    public float Damaged(float att)
+    public float Damaged(float att, Color ? color = null)
 	{
         if (this.pMobQueue.Count != 0)
 		{
@@ -57,11 +59,8 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
             Monster mob = obj.GetComponent<Monster>();
             mob.HP -= att;
 
-            if (mob.HP >= 0)
-            {
-                DamageOn damageTxt = obj.GetComponent<DamageOn>();
-                damageTxt.DamagedTxt();
-            }
+            DamageOn damageTxt = this.GetComponent<DamageOn>();
+            damageTxt.DamagedTxt(damageRoot, att, color);
 
             if (mob.HP <= 0)
 			{
@@ -78,6 +77,7 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
 
         return 0;
 	}
+
 
     void SetMoney()
 	{

@@ -12,7 +12,6 @@ public class Monster : MonoBehaviour
     private float playerHP = 0;
     private int cntLoop = 0;
     private PlayerControl player;
-    private float playerDef;
 
     public float att = 5;
 
@@ -41,11 +40,8 @@ public class Monster : MonoBehaviour
             if (currentState >= 0.9f && // 애니메이션 진행 상황이 0.9f 이상이면서 진행도가 cntLoop 초과일때
                 normalizedTime > cntLoop)
             {
-                if (att >= playerDef)
-                {
-                    playerHP = player.Damage(att - playerDef);
-                    cntLoop += 1;
-                }
+                playerHP = player.Damage(att);
+                cntLoop += 1;
 
                 if (playerHP <= 0)
                 {
@@ -62,7 +58,6 @@ public class Monster : MonoBehaviour
 		{
             animator.SetBool("attack", true);
             player = collision.gameObject.GetComponent<PlayerControl>();
-            playerDef = player.def;
         }
 	}
 }

@@ -44,4 +44,9 @@ public class BackgroundManager : ManagerSingleton2<BackgroundManager>
 			}
 		}
 	}
+
+	public void UpSpeed(float speed)
+	{
+		_speed += speed;
+	}
 }
