@@ -26,6 +26,8 @@ public class PlayerControl : MonoBehaviour
 
     // 버프 리스트
     public List<Buff> onBuff = new List<Buff>();
+    List<int> creCount = new List<int>();
+    int attcount = 0;
 
     void Start()
     {
@@ -47,13 +49,14 @@ public class PlayerControl : MonoBehaviour
             if (normalizedTimeInProcess >= 0.9f &&
                 normalizedTime > cntLoop)
 			{
-                int creRan = Random.Range(1, 1000);
+                int creRan = Random.Range(1, 100);
 
                 if (creRan < cre)
                     mobHP = EnemyManager.Instance.Damaged(att * creRan, Color.yellow);
                 else
                     mobHP = EnemyManager.Instance.Damaged(att);
 
+                attcount += 1;
                 cntLoop += 1;
 
                 if (mobHP <= 0)
@@ -63,6 +66,13 @@ public class PlayerControl : MonoBehaviour
 				}
 			}
 		}
+
+        AttackTxt.text = "현재 공격력 : " + att;
+        HpTxt.text = "현재 체력 : " + curHP + "/" + maxHP;
+        DefTxt.text = "현재 방어력 : " + def;
+        DexTxt.text = "현재 민첩성 : " + dex;
+        CreTxt.text = "현재 치명타 확률 : " + cre + "%";
+        GameManager.Instance.MoneyTxt.text = GameManager.Instance.Money.ToString();
     }
 
     public float Damage(float att)
@@ -93,7 +103,6 @@ public class PlayerControl : MonoBehaviour
         {
             GameManager.Instance.SetMoney(-1000);
             att += 10;
-            AttackTxt.text = "현재 공격력 : " + att;
         }
     }
 
@@ -105,11 +114,10 @@ public class PlayerControl : MonoBehaviour
         {
             GameManager.Instance.SetMoney(-100);
             curHP += 100;
+            maxHP += 100;
 
-            if (curHP >= maxHP)
-                maxHP = curHP;
-
-            HpTxt.text = "현재 체력 : " + curHP;
+            //if (curHP >= maxHP)
+            //    maxHP = curHP;
         }
     }
 
@@ -121,7 +129,6 @@ public class PlayerControl : MonoBehaviour
         {
             GameManager.Instance.SetMoney(-100);
             def += 1;
-            DefTxt.text = "현재 방어력 : " + def;
         }
     }
 
@@ -133,9 +140,8 @@ public class PlayerControl : MonoBehaviour
         {
             GameManager.Instance.SetMoney(-100);
             animator.speed += 0.1f;
-            BackgroundManager.Instance.UpSpeed(0.1f);
+            BackgroundManager.Instance.UpSpeed(0.3f);
             dex += 1;
-            DexTxt.text = "현재 민첩성 : " + dex;
         }
     }
 
@@ -147,7 +153,6 @@ public class PlayerControl : MonoBehaviour
         {
             GameManager.Instance.SetMoney(-100);
             cre += 1;
-            CreTxt.text = "현재 치명타 확률 : " + cre + "%";
         }
     }
 
@@ -173,7 +178,10 @@ public class PlayerControl : MonoBehaviour
         if (type == "Atk")
             originValue += 1;
         else if (type == "Dex")
-            originValue *= 2.0f;
+        {
+            originValue += 1;
+            animator.speed += 0.1f;
+        }
 
         return originValue;
 	}
@@ -188,9 +196,11 @@ public class PlayerControl : MonoBehaviour
 		{
             case "Atk":
                 att = (int)BuffChange(type, att);
+                
                 break;
             case "Dex":
                 dex = (int)BuffChange(type, dex);
+                BackgroundManager.Instance.UpSpeed(0.3f);
                 break;
 		}
 	}
@@ -204,8 +214,12 @@ public class PlayerControl : MonoBehaviour
         switch(type)
 		{
             case "Atk":
+                att -= 1;
                 break;
             case "Dex":
+                dex -= 1;
+                animator.speed -= 0.1f;
+                BackgroundManager.Instance.UpSpeed(-0.3f);
                 break;
 		}
 	}

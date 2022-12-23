@@ -24,7 +24,7 @@ public class Buff : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<PlayerControl>();
 	}
 
-    public void Init(string type, float per, float  du)
+    public void Init(string type, float per, float du)
 	{
         this.type = type;
         percentage = per;
@@ -38,8 +38,8 @@ public class Buff : MonoBehaviour
     public void Excute()
 	{
         // TODO : 플레이어의 버프 효과 줘야함.
+        player.onBuff.Add(this);
         player.ChooseBuff(type);
-        player.onBuff.Add(this.gameObject.GetComponent<Buff>());
 
         // 액티베이션 실행
         StartCoroutine(Activation());
@@ -67,6 +67,8 @@ public class Buff : MonoBehaviour
     public void DestroyActivation()
 	{
         // TODO : 버프 끝나고 처리할 함수
+        player.minusBuff(type);
+        player.onBuff.Remove(this);
         Destroy(gameObject);
 	}
 }

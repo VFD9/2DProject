@@ -432,7 +432,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\uD604\uC7AC \uBBFC\uCCA9\uC131 : 0"
+  m_Text: "\uD604\uC7AC \uBBFC\uCCA9\uC131 : 1"
 --- !u!222 &89483196
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -612,7 +612,7 @@ MonoBehaviour:
   curHP: 100
   maxHP: 100
   def: 0
-  dex: 0
+  dex: 1
   cre: 0
   hp_bar: {fileID: 1810089958}
   Noti: {fileID: 410697602}

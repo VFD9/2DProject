@@ -12,7 +12,7 @@ public class GameManager : ManagerSingleton<GameManager>
     public float Money = 1000;
     public Text MoneyTxt;
 
-	void Awake()
+	void Start()
 	{
 		MoneyTxt.text = "1,000";
 	}
