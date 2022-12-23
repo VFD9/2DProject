@@ -3,16 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public struct PlayerStatus
+{
+    public float curHp;
+    public float MaxHp;
+    public float dex;
+    public float def;
+    public float cri;
+    public float att;
+
+    public PlayerStatus(float HP, float MaxHP, float dex, float def, float cri, float att)
+	{
+        this.curHp = HP;
+        this.MaxHp = MaxHP;
+        this.dex = dex;
+        this.def = def;
+        this.cri = cri;
+        this.att = att;
+	}
+}
+
 public class PlayerControl : MonoBehaviour
 {
-    public float att = 20;
     Animator animator;
 
-    public float curHP = 100;
-    public float maxHP = 100;
-    public float def = 0;
-    public float dex = 0;
-    public float cre = 0;
+    public PlayerStatus curStatus;
+    public PlayerStatus originStatus;
 
     public Image hp_bar;
 
@@ -26,13 +42,13 @@ public class PlayerControl : MonoBehaviour
 
     // 버프 리스트
     public List<Buff> onBuff = new List<Buff>();
-    List<int> creCount = new List<int>();
-    int attcount = 0;
 
     void Start()
     {
         animator = GetComponent<Animator>();
 
+        this.originStatus = new PlayerStatus(100, 100, 1, 1, 1, 20);
+        this.curStatus = this.originStatus;
         animator.SetBool("attack", false);
     }
 
@@ -49,14 +65,13 @@ public class PlayerControl : MonoBehaviour
             if (normalizedTimeInProcess >= 0.9f &&
                 normalizedTime > cntLoop)
 			{
-                int creRan = Random.Range(1, 100);
+                int creRan = Random.Range(1, 1000);
 
-                if (creRan < cre)
-                    mobHP = EnemyManager.Instance.Damaged(att * creRan, Color.yellow);
+                if (creRan < curStatus.cri)
+                    mobHP = EnemyManager.Instance.Damaged(curStatus.att * creRan, Color.yellow);
                 else
-                    mobHP = EnemyManager.Instance.Damaged(att);
+                    mobHP = EnemyManager.Instance.Damaged(curStatus.att);
 
-                attcount += 1;
                 cntLoop += 1;
 
                 if (mobHP <= 0)
@@ -67,32 +82,34 @@ public class PlayerControl : MonoBehaviour
 			}
 		}
 
-        AttackTxt.text = "현재 공격력 : " + att;
-        HpTxt.text = "현재 체력 : " + curHP + "/" + maxHP;
-        DefTxt.text = "현재 방어력 : " + def;
-        DexTxt.text = "현재 민첩성 : " + dex;
-        CreTxt.text = "현재 치명타 확률 : " + cre + "%";
+        AttackTxt.text = "현재 공격력 : " + curStatus.att;
+        HpTxt.text = "현재 체력 : " + curStatus.curHp + "/" + curStatus.MaxHp;
+        DefTxt.text = "현재 방어력 : " + curStatus.def;
+        DexTxt.text = "현재 민첩성 : " + curStatus.dex;
+        CreTxt.text = "현재 치명타 확률 : " + curStatus.cri + "%";
         GameManager.Instance.MoneyTxt.text = GameManager.Instance.Money.ToString();
     }
 
     public float Damage(float att)
 	{
-        this.curHP -= (att - def);
-        // fillAmount : 0 ~ 1까지의 값으로 이미지 크기를 조정 (비율)
-        this.hp_bar.fillAmount = curHP / maxHP;
+        if (att >= curStatus.def)
+            curStatus.curHp -= (att - curStatus.def);
 
-        if (curHP <= 0)
+        // fillAmount : 0 ~ 1까지의 값으로 이미지 크기를 조정 (비율)
+        this.hp_bar.fillAmount = curStatus.curHp / curStatus.MaxHp;
+
+        if (curStatus.curHp <= 0)
         {
             Noti.text = "체력이 0이 되면 공격속도가 최저로 리셋됩니다.";
-            dex = 0.5f;
-            curHP = 0;
+            curStatus.dex = 0.5f;
+            curStatus.curHp = 0;
             // TODO : 추후 처리
             //animator.SetTrigger("death");
         }
         else
             Noti.text = "";
 
-        return curHP;
+        return curStatus.curHp;
 	}
 
     public void AttackUp()
@@ -102,7 +119,7 @@ public class PlayerControl : MonoBehaviour
         else
         {
             GameManager.Instance.SetMoney(-1000);
-            att += 10;
+            curStatus.att += 10;
         }
     }
 
@@ -113,11 +130,8 @@ public class PlayerControl : MonoBehaviour
         else
         {
             GameManager.Instance.SetMoney(-100);
-            curHP += 100;
-            maxHP += 100;
-
-            //if (curHP >= maxHP)
-            //    maxHP = curHP;
+            curStatus.curHp += 100;
+            curStatus.MaxHp += 100;
         }
     }
 
@@ -128,7 +142,7 @@ public class PlayerControl : MonoBehaviour
         else
         {
             GameManager.Instance.SetMoney(-100);
-            def += 1;
+            curStatus.def += 1;
         }
     }
 
@@ -139,9 +153,8 @@ public class PlayerControl : MonoBehaviour
         else
         {
             GameManager.Instance.SetMoney(-100);
-            animator.speed += 0.1f;
-            BackgroundManager.Instance.UpSpeed(0.3f);
-            dex += 1;
+            curStatus.dex += 1;
+            animator.speed += curStatus.dex * 0.1f;
         }
     }
 
@@ -152,7 +165,7 @@ public class PlayerControl : MonoBehaviour
         else
         {
             GameManager.Instance.SetMoney(-100);
-            cre += 1;
+            curStatus.cri += 1;
         }
     }
 
@@ -175,15 +188,20 @@ public class PlayerControl : MonoBehaviour
     /// <param name="originValue"> 체인지(추가)할 스테이스 값</param>
     public float BuffChange(string type, float originValue)
 	{
-        if (type == "Atk")
-            originValue += 1;
-        else if (type == "Dex")
-        {
-            originValue += 1;
-            animator.speed += 0.1f;
-        }
-
-        return originValue;
+        if (onBuff.Count > 0)
+		{
+            float temp = 0;
+            for (int i = 0; i < onBuff.Count; ++i)
+			{
+                if (onBuff[i].type.Equals(type))
+                    temp += originValue * onBuff[i].percentage;
+			}
+            return originValue + temp;
+		}
+        else
+		{
+            return originValue;
+		}
 	}
 
     /// <summary>
@@ -195,12 +213,10 @@ public class PlayerControl : MonoBehaviour
         switch(type)
 		{
             case "Atk":
-                att = (int)BuffChange(type, att);
-                
+                curStatus.att = (float)BuffChange(type, curStatus.att);
                 break;
             case "Dex":
-                dex = (int)BuffChange(type, dex);
-                BackgroundManager.Instance.UpSpeed(0.3f);
+                curStatus.dex = (float)BuffChange(type, curStatus.dex);
                 break;
 		}
 	}
@@ -214,12 +230,10 @@ public class PlayerControl : MonoBehaviour
         switch(type)
 		{
             case "Atk":
-                att -= 1;
+                this.curStatus.att = (float)BuffChange(type, originStatus.att);
                 break;
             case "Dex":
-                dex -= 1;
-                animator.speed -= 0.1f;
-                BackgroundManager.Instance.UpSpeed(-0.3f);
+                this.curStatus.dex = (float)BuffChange(type, originStatus.dex);
                 break;
 		}
 	}

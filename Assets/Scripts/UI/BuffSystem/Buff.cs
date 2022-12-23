@@ -48,27 +48,24 @@ public class Buff : MonoBehaviour
     IEnumerator Activation()
 	{
         // TODO : 아이콘 filAmount 시간대별로 줄어들도록 작업
-        while (true)
+        while (currentTime > 0)
         {
-            yield return new WaitForSeconds(1.0f);
-
-            currentTime--;
+            currentTime -= 1.0f;
             icon.fillAmount = currentTime / duration;
-
-            if (currentTime <= 0)
-            {
-                currentTime = 0;
-                DestroyActivation();
-                break;
-            }
+            yield return new WaitForSeconds(1.0f);
         }
+
+        icon.fillAmount = 0;
+        currentTime = 0;
+
+        DestroyActivation();
 	}
 
     public void DestroyActivation()
 	{
         // TODO : 버프 끝나고 처리할 함수
-        player.minusBuff(type);
         player.onBuff.Remove(this);
+        player.minusBuff(type);
         Destroy(gameObject);
 	}
 }
