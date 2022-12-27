@@ -44,7 +44,7 @@ public class EnemyManager : ManagerSingleton2<EnemyManager>
                 cMob.HP = 100;
 
                 this.pMobQueue.Enqueue(mob);
-                yield return new WaitForSeconds(Random.Range(1f, 2f));
+                yield return new WaitForSeconds(Random.Range(1f, 1.5f));
             }
             else
                 yield break;

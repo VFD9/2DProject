@@ -6,10 +6,11 @@ using UnityEngine.EventSystems;
 
 public class GameManager : ManagerSingleton<GameManager>
 {
-    public bool isScroll = true;
+	// public 변수를 만들고 해당 스크립트에서 사용하지 않으면 다른 스크립트에서도 사용될 여지가 있고, 문제가 될 경우 찾아봐야 한다.
+	public bool isScroll = true; 
 
-    // 돈
-    public float Money = 1000;
+	// 돈
+	public float Money = 1000;
     public Text MoneyTxt;
 
 	void Start()

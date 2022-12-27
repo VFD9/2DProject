@@ -11,7 +11,7 @@ public class Monster : MonoBehaviour
 
     private float playerHP = 0;
     private int cntLoop = 0;
-    private PlayerControl player;
+    private PlayerControl player; // 몬스터가 돌아야지만 플레이어컨트롤러가 돌 수 있게되는 의존적인 스크립트이다.
 
     public float att = 5;
 

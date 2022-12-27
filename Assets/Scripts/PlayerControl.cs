@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public struct PlayerStatus
 {
-    public float curHp;
-    public float MaxHp;
-    public float dex;
-    public float def;
-    public float cri;
-    public float att;
+    public float curHp; // 현재 체력
+    public float MaxHp; // 최대 체력
+    public float dex;   // 민첩성(속도)
+    public float def;   // 방어력
+    public float cri;   // 치명타 확률
+    public float att;   // 공격력
 
     public PlayerStatus(float HP, float MaxHP, float dex, float def, float cri, float att)
 	{
@@ -34,11 +34,11 @@ public class PlayerControl : MonoBehaviour
 
     public Text Noti;
 
-    public Text AttackTxt;
-    public Text HpTxt;
-    public Text DefTxt;
-    public Text DexTxt;
-    public Text CreTxt;
+    public Text attackTxt;
+    public Text hpTxt;
+    public Text defTxt;
+    public Text dexTxt;
+    public Text creTxt;
 
     // 버프 리스트
     public List<Buff> onBuff = new List<Buff>();
@@ -65,7 +65,7 @@ public class PlayerControl : MonoBehaviour
             if (normalizedTimeInProcess >= 0.9f &&
                 normalizedTime > cntLoop)
 			{
-                int creRan = Random.Range(1, 1000);
+                int creRan = Random.Range(1, 100);
 
                 if (creRan < curStatus.cri)
                     mobHP = EnemyManager.Instance.Damaged(curStatus.att * creRan, Color.yellow);
@@ -82,12 +82,12 @@ public class PlayerControl : MonoBehaviour
 			}
 		}
 
-        AttackTxt.text = "현재 공격력 : " + curStatus.att;
-        HpTxt.text = "현재 체력 : " + curStatus.curHp + "/" + curStatus.MaxHp;
-        DefTxt.text = "현재 방어력 : " + curStatus.def;
-        DexTxt.text = "현재 민첩성 : " + curStatus.dex;
-        CreTxt.text = "현재 치명타 확률 : " + curStatus.cri + "%";
-        GameManager.Instance.MoneyTxt.text = GameManager.Instance.Money.ToString();
+        attackTxt.text = "현재 공격력 : " + curStatus.att;
+        hpTxt.text = "현재 체력 : " + curStatus.curHp + "/" + curStatus.MaxHp;
+        defTxt.text = "현재 방어력 : " + curStatus.def;
+        dexTxt.text = "현재 민첩성 : " + curStatus.dex;
+        creTxt.text = "현재 치명타 확률 : " + curStatus.cri + "%";
+        GameManager.Instance.MoneyTxt.text = string.Format("{0:n0}", GameManager.Instance.Money.ToString());
     }
 
     public float Damage(float att)
