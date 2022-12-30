@@ -610,11 +610,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp_bar: {fileID: 1810089958}
   Noti: {fileID: 410697602}
-  AttackTxt: {fileID: 1279252231}
-  HpTxt: {fileID: 389753841}
-  DefTxt: {fileID: 1029710033}
-  DexTxt: {fileID: 89483195}
-  CreTxt: {fileID: 532569786}
+  attackTxt: {fileID: 1279252231}
+  hpTxt: {fileID: 389753841}
+  defTxt: {fileID: 1029710033}
+  dexTxt: {fileID: 89483195}
+  creTxt: {fileID: 532569786}
   onBuff: []
 --- !u!1 &124414940
 GameObject:
